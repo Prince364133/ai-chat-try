@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ask Gemini AI</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f9f9f9;
+      color: #333;
+      max-width: 800px;
+      margin: auto;
+    }
+    h1 {
+      color: #007bff;
+    }
+    input, button, textarea {
+      font-size: 16px;
+      padding: 10px;
+      margin-top: 10px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    #response {
+      background: #fff;
+      padding: 15px;
+      margin-top: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <h1>🤖 Ask Anything to Gemini AI</h1>
+  <input type="text" id="question" placeholder="Type your question here..." />
+  <button onclick="askGemini()">Ask Gemini</button>
+
+  <div id="response"></div>
+
+  <script>
+    async function askGemini() {
+      const question = document.getElementById('question').value.trim();
+      const responseDiv = document.getElementById('response');
+
+      if (!question) {
+        responseDiv.innerText = "❗ Please enter a question.";
+        return;
+      }
+
+      responseDiv.innerText = "⏳ Thinking...";
+
+      const apiKey = "AIzaSyCokIGHyBhQ0eX039gqIHWmsW3HX7grsrk";
+
+      try {
+        const res = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=" + apiKey, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: question }] }]
+          })
+        });
+
+        const data = await res.json();
+        const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "❌ No response.";
+        responseDiv.innerText = text;
+
+      } catch (err) {
+        responseDiv.innerText = "🚫 Error: " + err.message;
+      }
+    }
+  </script>
+</body>
+</html>
